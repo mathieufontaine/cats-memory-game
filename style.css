@@ -48,6 +48,6 @@ section {
   backface-visibility: hidden;
 }
 
-.toggleCard {
+.toggledCard {
   transform: rotateY(180deg);
 }

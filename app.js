@@ -1,6 +1,6 @@
 const section = document.querySelector("section");
 const livesCount = document.querySelector("span");
-const lives = 6;
+let lives = 10;
 
 // link text
 
@@ -46,6 +46,7 @@ const cardGenerator = () => {
     back.classList = "back";
     // attach info to cards
     face.src = item.imgsrc;
+    card.setAttribute("name", item.name);
     // append card
     section.appendChild(card);
     card.appendChild(face);
@@ -53,7 +54,7 @@ const cardGenerator = () => {
 
     // add event
     card.addEventListener("click", e => {
-      card.classList.toggle("toggleCard");
+      card.classList.toggle("toggledCard");
       checkCard(e);
     });
   });
@@ -61,7 +62,58 @@ const cardGenerator = () => {
 
 // checkCards
 const checkCard = e => {
-  console.log(e.target);
+  const clickedCard = e.target;
+  clickedCard.classList.add("flipped");
+  clickedCard.style.pointerEvents = "none";
+  const flippedCards = document.querySelectorAll(".flipped");
+  console.log(flippedCards);
+  if (flippedCards.length === 2) {
+    if (
+      flippedCards[0].getAttribute("name") ===
+      flippedCards[1].getAttribute("name")
+    ) {
+      flippedCards.forEach(card => {
+        card.classList.remove("flipped");
+        card.style.pointerEvents = "none";
+      });
+      const toggledCards = document.querySelectorAll(".toggledCard");
+      if (toggledCards.length === 16)
+        setTimeout(() => {
+          restart("You won! Play again. ");
+        }, 1000);
+    } else {
+      flippedCards.forEach(card => {
+        card.classList.remove("flipped");
+        card.style.pointerEvents = "all";
+        setTimeout(() => {
+          card.classList.remove("toggledCard");
+        }, 1000);
+      });
+      lives--;
+      livesCount.textContent = lives;
+      if (lives === 0)
+        setTimeout(() => {
+          restart("You lost! Try again. ");
+        }, 1000);
+    }
+  }
+};
+
+const restart = text => {
+  alert(text);
+  const cardsData = randomize();
+  const faces = document.querySelectorAll(".face");
+  const cards = document.querySelectorAll(".card");
+  section.style.pointerEvents = "none";
+  cardsData.forEach((item, index) => {
+    cards[index].classList.remove("toggledCard");
+    cards[index].style.pointerEvents = "all";
+    cards[index].setAttribute("name", item.name);
+    faces[index].src = item.imgsrc;
+  });
+  lives = 6;
+  livesCount.textContent = lives;
+  section.style.pointerEvents = "all";
 };
 
 cardGenerator();
